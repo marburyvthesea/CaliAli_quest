@@ -18,3 +18,9 @@ CNMF-e/ca_source_extraction/.DS_Store
 CNMF-e/.DS_Store
 .DS_Store
 *.asv
+
+# Ignore video files
+*.avi
+*.mp4
+*.mov
+*.mkv
