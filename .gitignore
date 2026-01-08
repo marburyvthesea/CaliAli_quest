@@ -1,3 +1,6 @@
+# Quest SLURM logs
+quest/logfiles/*.out
+*.out
 
 *.asv
 "site/" 
