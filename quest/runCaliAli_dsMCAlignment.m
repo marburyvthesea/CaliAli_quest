@@ -10,7 +10,6 @@ CaliAli_options = CaliAli_demo_parameters();
 %CaliAli_options.downsampling.input_files{1,3} = '/gpfs/home/jma819/CaliAli/260105_151408_ses02.avi' ; 
 %CaliAli_options.downsampling.input_files{1,4} = '/gpfs/home/jma819/CaliAli/260105_151408_ses03.avi' ; 
 
-combinedDir = '/scratch/jma819/CaliAli_testData/m7_CC_combined';
 aviList = dir(fullfile(combinedDir, '*.avi'));
 assert(~isempty(aviList), 'No .avi files found in: %s', combinedDir);
 
@@ -33,7 +32,7 @@ disp(CaliAli_options.downsampling.output_files)
 
 CaliAli_options.motion_correction.input_files = CaliAli_options.downsampling.output_files ;
 
-CaliAli_options = CaliAli_motion_correction(CaliAli_options);
+CaliAli_options = CaliAli_motion_correction_quest(CaliAli_options);
 
 %% pipe output of motion correction into intersesion alignment and run 
 
