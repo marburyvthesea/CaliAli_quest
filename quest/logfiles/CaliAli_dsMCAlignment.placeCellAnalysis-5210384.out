@@ -1,0 +1,23 @@
+/scratch/jma819/CaliAli_testData/m7_CC_combined_ds
+MATLAB is selecting SOFTWARE OPENGL rendering.
+
+                            < M A T L A B (R) >
+                  Copyright 1984-2023 The MathWorks, Inc.
+             R2023b Update 10 (23.2.0.2859533) 64-bit (glnxa64)
+                              January 27, 2025
+
+ 
+To get started, type doc.
+For product information, visit www.mathworks.com.
+ 
+[Warning: Function narginchk has the same name as a MATLAB built-in. We suggest
+you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath>doPathAddition (line 116)
+In addpath (line 80)] 
+[Warning: Function maxNumCompThreads has the same name as a MATLAB built-in. We
+suggest you rename the function to avoid a potential name conflict.] 
+[> In path (line 109)
+In addpath>doPathAddition (line 116)
+In addpath (line 80)] 
+finished analysis

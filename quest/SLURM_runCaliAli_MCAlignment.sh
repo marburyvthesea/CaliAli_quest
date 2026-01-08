@@ -30,8 +30,6 @@ module load matlab/r2023b
 cd /home/jma819/EXTRACT-public
 #run analysis 
 
-matlab -nosplash -nodesktop -r "addpath(genpath('/home/jma819/CaliAli_quest'));maxNumCompThreads(str2num(getenv('SLURM_NPROCS')));
-dsPath='$INPUT_pathToDSFiles';
-run('runCaliAli_MCAlignment.m');exit;"
+matlab -nosplash -nodesktop -r "addpath(genpath('/home/jma819/CaliAli_quest'));maxNumCompThreads(str2num(getenv('SLURM_NPROCS')));dsPath='$INPUT_pathToDSFiles';run('runCaliAli_MCAlignment.m');exit;"
 
 echo 'finished analysis'
