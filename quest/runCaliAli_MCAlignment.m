@@ -3,6 +3,7 @@
 
 %
 CaliAli_options = CaliAli_demo_parameters();
+disp('loaded default parameters')
 
 %manually inputting files 
 %CaliAli_options.downsampling.input_files{1,1} = '/gpfs/home/jma819/CaliAli/260105_151408_ses00.avi' ; 
@@ -11,9 +12,17 @@ CaliAli_options = CaliAli_demo_parameters();
 %CaliAli_options.downsampling.input_files{1,4} = '/gpfs/home/jma819/CaliAli/260105_151408_ses03.avi' ; 
 
 dsList = dir(fullfile(dsPath, '*ds.mat'));
+
+disp('looking for files here:');
+disp('dsPath,');
+
 assert(~isempty(dsList), 'No *ds.mat files found in: %s', dsPath);
 
 dsNames = sort({dsList.name});                     % works because 00,01,02...
+
+disp('found files');
+disp(dsNames);
+
 dsPaths = fullfile(dsPath, dsNames);
 CaliAli_options.motion_correction.input_files = reshape(dsPaths, 1, []);
 
