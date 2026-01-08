@@ -28,7 +28,7 @@ CaliAli_options.motion_correction.input_files = reshape(dsPaths, 1, []);
 
 %% run motion correction 
 
-CaliAli_options = CaliAli_motion_correction(CaliAli_options);
+CaliAli_options = CaliAli_motion_correction_quest(CaliAli_options);
 
 %% pipe output of motion correction into intersesion alignment and run 
 
