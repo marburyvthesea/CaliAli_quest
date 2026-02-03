@@ -16,8 +16,9 @@ cd ~
 #path to file 
 
 INPUT_combinedDir=$1
+INPUT_dsFactor=$2
 
-echo $INPUT_pathToDSFiles
+echo $INPUT_combinedDir
 
 #add project directory to PATH
 export PATH=$PATH/projects/p30771/
@@ -36,6 +37,6 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-combinedDir='$INPUT_combinedDir';run('runCaliAli_MCAlignment.m');exit;"
+combinedDir='$INPUT_combinedDir';dsInput=str2double('$INPUT_dsFactor');run('runCaliAli_dsMCAlignment.m');exit;"
 
 echo 'finished analysis'

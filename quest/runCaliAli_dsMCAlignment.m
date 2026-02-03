@@ -2,13 +2,11 @@
 % JJM 1/2026
 
 %
+disp('setting downsampling to')
+disp(dsInput)
+
 CaliAli_options = CaliAli_demo_parameters();
 
-%manually inputting files 
-%CaliAli_options.downsampling.input_files{1,1} = '/gpfs/home/jma819/CaliAli/260105_151408_ses00.avi' ; 
-%CaliAli_options.downsampling.input_files{1,2} = '/gpfs/home/jma819/CaliAli/260105_151408_ses01.avi' ; 
-%CaliAli_options.downsampling.input_files{1,3} = '/gpfs/home/jma819/CaliAli/260105_151408_ses02.avi' ; 
-%CaliAli_options.downsampling.input_files{1,4} = '/gpfs/home/jma819/CaliAli/260105_151408_ses03.avi' ; 
 
 aviList = dir(fullfile(combinedDir, '*.avi'));
 assert(~isempty(aviList), 'No .avi files found in: %s', combinedDir);
@@ -17,6 +15,7 @@ aviNames = sort({aviList.name});                     % works because 00,01,02...
 aviPaths = fullfile(combinedDir, aviNames);
 CaliAli_options.downsampling.input_files = reshape(aviPaths, 1, []);
 
+CaliAli_options.downsampling.spatial_ds=dsInput;
 
 %% run downsampling
 

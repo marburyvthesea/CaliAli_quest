@@ -1,0 +1,6 @@
+
+
+
+# input files for CaliAli_options.downsampling.input_files
+
+# 1×N cell array with N # of movies, CaliAli_options.downsampling.input_files{1,x} is full path to avi 
