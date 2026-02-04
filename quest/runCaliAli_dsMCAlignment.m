@@ -35,7 +35,7 @@ CaliAli_options = CaliAli_motion_correction_quest(CaliAli_options);
 
 %% pipe output of motion correction into intersesion alignment and run 
 
-CaliAli_options.inter_session_alignment.input_files = CaliAli_options.motion_correction.output_files ;
+CaliAli_options.inter_session_alignment.input_files = CaliAli_options.motion_correction.output_files;
 
 CaliAli_options = CaliAli_align_sessions_quest(CaliAli_options);
 
