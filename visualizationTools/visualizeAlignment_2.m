@@ -1,7 +1,7 @@
 
 %%create video of aligned projections from aligned file
 
-P = A.P;
+P = isa.P;
 frame = plot_P(P);
 %or 
 %frame = plot_P_JJM(A);
