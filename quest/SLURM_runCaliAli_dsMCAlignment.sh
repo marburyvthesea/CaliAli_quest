@@ -3,10 +3,11 @@
 #SBATCH -p normal
 #SBATCH -t 24:00:00
 #SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out # STDOUT
-#SBATCH --job-name="placeCellAnalysis"
-#SBATCH --mem-per-cpu=5200M
+#SBATCH --job-name="CaliAli_mcAlignment_cpuspertask"
 #SBATCH -N 1
-#SBATCH -n 24
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem-per-cpu=5200M
 
 module purge all
 
@@ -14,21 +15,28 @@ cd ~
 
 #path to file 
 
-INPUT_pathToMotionCorrectedFile=$1
+INPUT_combinedDir=$1
+INPUT_dsFactor=$2
 
-echo $INPUT_pathToMotionCorrectedFile
+echo $INPUT_combinedDir
 
 #add project directory to PATH
 export PATH=$PATH/projects/p30771/
 
 
 #load modules to use
+module load gstreamer/1.20
 module load matlab/r2023b
 
 #cd to script directory
-cd /home/jma819/EXTRACT-public
+cd /home/jma819/CaliAli_quest
 #run analysis 
 
-matlab -nosplash -nodesktop -r "addpath(genpath('/home/jma819/EXTRACT-public'));addpath(genpath('/home/jma819/EXTRACT_analysis_JJM'));maxNumCompThreads(str2num(getenv('SLURM_NPROCS')));filePath='$INPUT_pathToMotionCorrectedFile';num_partitions='$INPUT_numPartitions';savePath='$INPUT_savePath';run('runEXTRACT_JJM_quest.m');exit;"
+matlab -nosplash -nodesktop -r "addpath(genpath('/home/jma819/CaliAli_quest')); \
+n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
+if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
+if isnan(n) || n<1, n=feature('numcores'); end; \
+maxNumCompThreads(n); \
+combinedDir='$INPUT_combinedDir';dsInput=str2double('$INPUT_dsFactor');run('runCaliAli_dsMCAlignment.m');exit;"
 
 echo 'finished analysis'
