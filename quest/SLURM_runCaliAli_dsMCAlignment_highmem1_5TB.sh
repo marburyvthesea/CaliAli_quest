@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH -A p30771
-#SBATCH -p normal
-#SBATCH -t 24:00:00
+#SBATCH -p genhimem
+#SBATCH -t 48:00:00
 #SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out # STDOUT
 #SBATCH --job-name="CaliAli_mcAlignment_cpuspertask"
 #SBATCH -N 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=200G
+#SBATCH --mem=1400G
 
 module purge all
 
