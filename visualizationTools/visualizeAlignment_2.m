@@ -2,9 +2,9 @@
 %%create video of aligned projections from aligned file
 
 P = isa.P;
-frame = plot_P(P);
+%frame = plot_P(P);
 %or 
-%frame = plot_P_JJM(A);
+frame = plot_P_JJM(isa);
 
 %% plot where the "aligned regions correspond to back to the original movie
 %% Plot Translation canvas + CaliAli(shifts) canvas + ROI on ORIGINAL canvas (no centering)
@@ -111,7 +111,7 @@ fprintf("ROI in original:          x=%d..%d, y=%d..%d\n", ...
     rectShiftROI_orig(2), rectShiftROI_orig(2)+rectShiftROI_orig(4)-1);
 
 %% plot neuron projections
-plot_session_neuron_boxes_vs_caliali(isa, 90)
+plot_session_neuron_boxes_vs_caliali(isa, 140)
 %% plot BV projections 
 plot_session_bv_boxes_vs_caliali(isa, 90)
 
