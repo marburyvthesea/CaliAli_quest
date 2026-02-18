@@ -3,11 +3,11 @@
 #SBATCH -p genhimem
 #SBATCH -t 48:00:00
 #SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out # STDOUT
-#SBATCH --job-name="CaliAli_mcAlignment_cpuspertask"
+#SBATCH --job-name="CaliAli_Alignment_cpuspertask"
 #SBATCH -N 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=1400G
+#SBATCH --mem=1000G
 
 module purge all
 
@@ -16,7 +16,7 @@ cd ~
 #path to file 
 
 INPUT_combinedDir=$1
-INPUT_dsFactor=$2
+
 
 echo $INPUT_combinedDir
 
@@ -37,6 +37,6 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-combinedDir='$INPUT_combinedDir';dsInput=str2double('$INPUT_dsFactor');run('runCaliAli_Alignment_onMotionCorrectedFilesOrDet.m');exit;"
+combinedDir='$INPUT_combinedDir';run('runCaliAli_Alignment_onMotionCorrectedFilesOrDet.m');exit;"
 
 echo 'finished analysis'
