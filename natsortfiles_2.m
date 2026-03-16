@@ -1,4 +1,4 @@
-function sortedNames = natsortfiles(names)
+function sortedNames = natsortfiles_2(names)
 % Very small natural-sort for filenames containing digits.
 % Input:  cellstr of filenames (no paths)
 % Output: cellstr sorted naturally
