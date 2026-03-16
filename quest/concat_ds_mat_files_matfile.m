@@ -51,7 +51,7 @@ fprintf('Output Y will be %dx%dx%d (%s)\n', H, W, Ftot, cls);
 
 % ---- Create output + preallocate ----
 mout = matfile(outMatPath, 'Writable', true);
-mout.Y = zeros(H, W, Ftot, cls);
+mout.Y(H, W, Ftot) = cast(0, cls);   % grows variable on disk
 
 % Save options from first selected file (not necessarily global-first)
 tmp = load(pathsUse{1}, 'CaliAli_options');
