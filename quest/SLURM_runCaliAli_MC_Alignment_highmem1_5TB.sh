@@ -9,20 +9,27 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=1400G
 
+
+set -euo pipefail
+
 module purge all
 
 cd ~
 
-#path to file 
+#inputs
+INPUT_combinedDir="${1:?ERROR: need <combinedDir> as arg1}"
+BVsize="${2:-}"   # optional string, e.g. "[1.60, 1.75]"  or "1.60,1.75"
+gSig="${3:-}"     # optional
 
-INPUT_combinedDir=$1
+echo "combinedDir: $INPUT_combinedDir"
+echo "BVsize     : ${BVsize:-<default>}"
+echo "gSig       : ${gSig:-<default>}"
 
-
-echo $INPUT_combinedDir
 
 #add project directory to PATH
 export PATH=$PATH/projects/p30771/
-
+export PATH=$PATH/projects/b1118/
+export PATH=$PATH/scratch/jma819/
 
 #load modules to use
 module load gstreamer/1.20
@@ -37,6 +44,6 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-dsPath='$INPUT_combinedDir';run('runCaliAli_MCAlignment.m');exit;"
+runCaliAli_MCAlignmentFN('${INPUT_combinedDir}','${BVsize}','${gSig}');exit;"
 
 echo 'finished analysis'

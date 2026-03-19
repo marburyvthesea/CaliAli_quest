@@ -1,3 +1,7 @@
+%% If loadling from "aligned.mat" file
+
+isa = CaliAli_options.inter_session_alignment; 
+
 
 %%create video of aligned projections from aligned file
 
