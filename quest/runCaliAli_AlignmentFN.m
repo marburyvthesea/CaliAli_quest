@@ -1,5 +1,6 @@
-function runCaliAli_MCAlignmentFN(dsPath, BVsize_str, gSig_str)
-% dsPath required
+function runCaliAli_AlignmentFN(mcPath, BVsize_str, gSig_str)
+
+% mcPath required
 % BVsize_str optional: "[1.6, 1.75]" or "1.6,1.75" or "1.6 1.75"
 % gSig_str optional: "4"
 
@@ -10,34 +11,22 @@ disp('loaded default parameters')
 BVsize = parseBVsize2(BVsize_str);   % [] or 1x2
 gSig   = parseScalarPos(gSig_str);   % [] or scalar
 
-% ---- BEFORE motion correction: optionally update BVsize ----
-if ~isempty(BVsize)
-    CaliAli_options.motion_correction.BVsize = BVsize;
-    fprintf("Set BVsize (pre-MC) = [%g %g]\n", BVsize(1), BVsize(2));
-else
-    disp("BVsize not provided: using defaults from CaliAli_demo_parameters()");
-end
-
 % ---- build ds file list ----
-dsList = dir(fullfile(dsPath, '*ds.mat'));
+mcList = dir(fullfile(mcPath, '*mc.mat'));
 disp('looking for files here:');
-disp(dsPath);
+disp(mcPath);
 
-assert(~isempty(dsList), 'No *ds.mat files found in: %s', dsPath);
+assert(~isempty(mcList), 'No *ds.mat files found in: %s', mcPath);
 
-dsNames = sort({dsList.name});
+mcNames = sort({mcList.name});
 disp('found files');
-disp(dsNames);
+disp(mcNames);
 
-dsPaths = fullfile(dsPath, dsNames);
-CaliAli_options.motion_correction.input_files = reshape(dsPaths, 1, []);
-
-%% run motion correction
-CaliAli_options = CaliAli_motion_correction_quest(CaliAli_options);
+mcPaths = fullfile(mcPath, mcNames);
 
 %% pipe output of motion correction into intersession alignment
-CaliAli_options.inter_session_alignment.input_files = CaliAli_options.motion_correction.output_files;
-
+CaliAli_options.inter_session_alignment.input_files = reshape(mcPaths, 1, []);
+%%
 % ---- BEFORE alignment: optionally update BVsize and gSig ----
 if ~isempty(BVsize)
     CaliAli_options.inter_session_alignment.BVsize = BVsize;

@@ -1,4 +1,4 @@
-function runCaliAli_MCAlignmentFN(dsPath, BVsize_str, gSig_str)
+
 % dsPath required
 % BVsize_str optional: "[1.6, 1.75]" or "1.6,1.75" or "1.6 1.75"
 % gSig_str optional: "4"
@@ -34,10 +34,11 @@ CaliAli_options.motion_correction.input_files = reshape(dsPaths, 1, []);
 
 %% run motion correction
 CaliAli_options = CaliAli_motion_correction_quest(CaliAli_options);
+%% 
 
 %% pipe output of motion correction into intersession alignment
 CaliAli_options.inter_session_alignment.input_files = CaliAli_options.motion_correction.output_files;
-
+%%
 % ---- BEFORE alignment: optionally update BVsize and gSig ----
 if ~isempty(BVsize)
     CaliAli_options.inter_session_alignment.BVsize = BVsize;
@@ -58,7 +59,7 @@ fprintf('BV Score: %.4f\n', CaliAli_options.inter_session_alignment.BV_score);
 disp('saved intersession alignment file')
 disp(CaliAli_options.inter_session_alignment.out_aligned_sessions)
 
-end
+
 
 % -------- helpers --------
 
