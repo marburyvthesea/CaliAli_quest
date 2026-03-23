@@ -44,6 +44,6 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-runCaliAli_AlignmentFN('$INPUT_multiTiffInput','${BVsize}','${gSig}');exit;"
+runCaliAli_AlignmentFNfromTiffs('$INPUT_multiTiffInput','${BVsize}','${gSig}');exit;"
 
 echo 'finished analysis'
