@@ -1,25 +1,23 @@
 %% modification of "Demo_pipeline.mlx" to run on quest 
 % JJM 1/2026
 
+
+multiTiffInput = {'/Users/johnmarshall/Documents/Analysis/miniscope_analysis/caliAliData/m326_Yiwen/day_001_04012025_13_54_32', ...
+                    '/Users/johnmarshall/Documents/Analysis/miniscope_analysis/caliAliData/m326_Yiwen/day_002_04022025_15_27_34'} ; 
+
 %
 disp('setting downsampling to')
-disp(dsInput)
+disp(multiTiffInput)
 
 CaliAli_options = CaliAli_demo_parameters();
-
-
-aviList = dir(fullfile(combinedDir, '*.avi'));
-assert(~isempty(aviList), 'No .avi files found in: %s', combinedDir);
-
-aviNames = sort({aviList.name});                     % works because 00,01,02...
-aviPaths = fullfile(combinedDir, aviNames);
-CaliAli_options.downsampling.input_files = reshape(aviPaths, 1, []);
+CaliAli_options.downsampling.file_extesnion = '.tiff'; 
+%CaliAli_options.downsampling.input_files = multiTiffInput; 
 
 CaliAli_options.downsampling.spatial_ds=dsInput;
 
 %% run downsampling
 
-CaliAli_options = CaliAli_downsample_batch(CaliAli_options)
+CaliAli_options = CaliAli_downsample_batch(CaliAli_options) ; 
 
 % this should populate the "CaliAli_options.downsampling.output_files" structure
 % print to confirm
