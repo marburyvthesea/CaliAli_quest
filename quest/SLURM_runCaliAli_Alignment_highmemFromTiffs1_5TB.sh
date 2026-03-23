@@ -9,6 +9,11 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=1400G
 
+#sbatch SLURM_runCaliAli_Alignment_highmemFromTiffs1_5TB.sh \
+#  /scratch/jma819/CaliAli_testData/m326_Yiwen/day001_04012025_13_54_32 \
+#  /scratch/jma819/CaliAli_testData/m326_Yiwen/day002_04022025_15_27_34 \
+#  "[1 1.95]" \
+#  "2"
 
 set -euo pipefail
 
@@ -17,14 +22,21 @@ module purge all
 cd ~
 
 #inputs
-INPUT_multiTiffInput="${1:?ERROR: need <combinedDir> as arg1}"
-BVsize="${2:-}"   # optional string, e.g. "[1.60, 1.75]"  or "1.60,1.75"
-gSig="${3:-}"     # optional
+#inputs: last two are optional overrides
+BVsize="${@: -2:1}"   # second-to-last
+gSig="${@: -1}"       # last
+dirs=("${@:1:$#-2}")  # everything except last two
 
-echo "multiTiffInputStructure: $INPUT_multiTiffInput"
-echo "BVsize     : ${BVsize:-<default>}"
-echo "gSig       : ${gSig:-<default>}"
+echo "dirs: ${dirs[*]}"
+echo "BVsize: ${BVsize}"
+echo "gSig: ${gSig}"
 
+# Build MATLAB cell array literal: {'dir1','dir2',...}
+mat_dirs="{"
+for d in "${dirs[@]}"; do
+  mat_dirs="${mat_dirs}'${d}',"
+done
+mat_dirs="${mat_dirs%,}}"
 
 #add project directory to PATH
 export PATH=$PATH/projects/p30771/
@@ -44,6 +56,6 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-runCaliAli_AlignmentFNfromTiffs('$INPUT_multiTiffInput','${BVsize}','${gSig}');exit;"
+runCaliAli_MCAlignmentFNfromTiffs($mat_dirs,'$BVsize','$gSig');exit;"
 
 echo 'finished analysis'
