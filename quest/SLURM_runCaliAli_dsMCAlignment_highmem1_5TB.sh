@@ -2,41 +2,60 @@
 #SBATCH -A p30771
 #SBATCH -p genhimem
 #SBATCH -t 48:00:00
-#SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out # STDOUT
+#SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out
 #SBATCH --job-name="CaliAli_mcAlignment_cpuspertask"
 #SBATCH -N 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=1400G
+#SBATCH --mem=400G
+
+set -euo pipefail
 
 module purge all
-
 cd ~
 
-#path to file 
+# Expect: dirs... dsInput BVsize_str gSig_str
+# Optional behavior: pass "" "" for BVsize/gSig to mean "use defaults"
+if [ "$#" -lt 4 ]; then
+  echo "Usage:"
+  echo "  sbatch $0 <dir1> [dir2 ...] <dsInput> <BVsize_str> <gSig_str>"
+  echo ""
+  echo "Examples:"
+  echo "  sbatch $0 /path/day1 /path/day2 2 \"[1.6, 1.95]\" \"2\""
+  echo "  sbatch $0 /path/day1 /path/day2 1 \"\" \"\""
+  exit 1
+fi
 
-INPUT_combinedDir=$1
-INPUT_dsFactor=$2
+gSig_str="${@: -1}"
+BVsize_str="${@: -2:1}"
+dsInput="${@: -3:1}"
+dirs=("${@:1:$#-3}")   # everything except last 3
 
-echo $INPUT_combinedDir
+echo "dsInput   : $dsInput"
+echo "BVsize_str: ${BVsize_str:-<empty>}"
+echo "gSig_str  : ${gSig_str:-<empty>}"
+echo "dirs      : ${dirs[*]}"
 
-#add project directory to PATH
-export PATH=$PATH/projects/p30771/
+# Build MATLAB cell array literal: {'dir1','dir2',...}
+mat_dirs="{"
+for d in "${dirs[@]}"; do
+  mat_dirs="${mat_dirs}'${d}',"
+done
+mat_dirs="${mat_dirs%,}}"
 
-
-#load modules to use
 module load gstreamer/1.20
 module load matlab/r2023b
 
-#cd to script directory
 cd /home/jma819/CaliAli_quest
-#run analysis 
 
 matlab -nosplash -nodesktop -r "addpath(genpath('/home/jma819/CaliAli_quest')); \
 n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-combinedDir='$INPUT_combinedDir';dsInput=str2double('$INPUT_dsFactor');run('runCaliAli_Alignment_onMotionCorrectedFilesOrDet.m');exit;"
-
-echo 'finished analysis'
+multiTiffInput = ${mat_dirs}; \
+dsVal = str2double('${dsInput}'); \
+BVsize_str = '${BVsize_str}'; \
+gSig_str = '${gSig_str}'; \
+runCaliAli_dsMCAlignmentFNfromTiffsorMat(multiTiffInput, dsVal, BVsize_str, gSig_str); \
+exit;"
