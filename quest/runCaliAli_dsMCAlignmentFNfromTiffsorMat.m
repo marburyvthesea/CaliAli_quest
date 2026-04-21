@@ -132,6 +132,31 @@ if allAreMat
     return;
 end
 
+% ---- NEW: cell array of folder(s) that already contain *_denoised_converted_concat.mat ----
+allAreDirs = all(cellfun(@(x) (ischar(x)||isstring(x)) && isfolder(char(x)), multiTiffInput));
+
+if allAreDirs
+    % If every folder contains concat mats, use those and skip TIFF concatenation
+    allHaveConcat = true;
+    perDirFiles = cell(1,numel(multiTiffInput));
+    for ii = 1:numel(multiTiffInput)
+        p = char(multiTiffInput{ii});
+        d = dir(fullfile(p, '*_denoised_converted_concat.mat'));
+        if isempty(d)
+            allHaveConcat = false;
+            break;
+        end
+        perDirFiles{ii} = fullfile(p, sort({d.name}));
+    end
+
+    if allHaveConcat
+        input_files = [perDirFiles{:}];
+        input_files = reshape(input_files, 1, []);
+        return;
+    end
+    % else: fall through to TIFF-concat behavior (treat each dir as TIFF dir)
+end
+
 % Otherwise treat as list of directories containing TIFFs
 input_files = cell(1, numel(multiTiffInput));
 for i = 1:numel(multiTiffInput)
