@@ -159,11 +159,32 @@ switch true
         sample = h5read(fullFileName, '/Object', [1 1 1], [1 1 1]);
         reader.src_class = class(sample);
         reader.read_range = @(s, e) cast(h5read(fullFileName, '/Object', [1 1 s], [dims(1) dims(2) e - s + 1]), reader.src_class);
+    
+    case contains(ext, '.mat')
+        varName = 'Y';  % or make it opts.varName
+        mf = matfile(fullFileName);   % does not load Y
+    
+        dims = size(mf, varName);     % [H W T]
+        reader.nFrames  = dims(3);
+        reader.size     = [dims(1), dims(2)];
+    
+        % Determine class without loading the whole array
+        sample = mf.(varName)(1,1,1);
+        reader.src_class = class(sample);
+
+        % Must return HxWxN (like all other readers)
+        reader.read_range = @(s,e) mf.(varName)(:,:,s:e);
+
+    
     otherwise
         error('Unsupported file format. Supported formats are: .avi, .m4v, .mp4, .isxd, .tif, .tiff, .h5');
 end
 end
 
+function frames = read_mat_range(mf, varName, start_idx, end_idx)
+    % start_idx/end_idx are 1-based to match your other readers
+    frames = mf.(varName)(:,:,start_idx:end_idx);
+end
 
 function frames = read_video_range(v, start_idx, end_idx)
 n = end_idx - start_idx + 1;
