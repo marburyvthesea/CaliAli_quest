@@ -39,7 +39,7 @@ for k = 1:numel(opt.input_files)
     end
 
     [filepath, name, ext] = fileparts(fullFileName);
-    outFile = fullfile(filepath, name + '_ds.mat');
+    outFile = fullfile(filepath, [name '_ds.mat']);
     opt.output_files{k} = outFile;
 
     if isfile(outFile)
@@ -85,6 +85,12 @@ for k = 1:numel(opt.input_files)
         if startIdx == 1
             payload = [payload, {'CaliAli_options', CaliAli_options}]; %#ok<AGROW>
         end
+        disp(d1);
+        disp(d2);
+        disp(Fds);
+        disp(size(raw));
+        disp(startIdx);
+        disp(endIdx);
         CaliAli_save({fullFileName, k, startIdx, endIdx, outFile}, payload{:});
 
         clear raw chunk
