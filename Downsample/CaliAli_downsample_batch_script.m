@@ -1,4 +1,4 @@
-function CaliAli_options=CaliAli_downsample_batch(CaliAli_options)
+
 %% CaliAli_downsample_batch: Downsample input video files in batches.
 %
 % This function mirrors CaliAli_downsample but processes data in chunks to
@@ -14,20 +14,20 @@ function CaliAli_options=CaliAli_downsample_batch(CaliAli_options)
 %   - batch_sz: number of downsampled frames per batch. Use a numeric value,
 %     0/Inf to process all at once, or 'auto' to pick a heuristic size.
 
-if nargin < 1 || isempty(CaliAli_options)
-    CaliAli_options = CaliAli_parameters();
-else
-    CaliAli_options = CaliAli_parameters(CaliAli_options);
-end
-
+%if nargin < 1 || isempty(CaliAli_options)
+%    CaliAli_options = CaliAli_parameters();
+%else
+%    CaliAli_options = CaliAli_parameters(CaliAli_options);
+%end
+%%
 opt = CaliAli_options.downsampling;
 batch_sz = opt.batch_sz;
 if isempty(opt.input_files)
     opt.input_files = uipickfiles('REFilter','\.h5$|\.avi$|\.m4v$|\.mp4$|\.tif$|\.tiff$|\.isxd$');
 end
-
+%%
 F = nan(1, numel(opt.input_files));
-
+%%
 for k = 1:numel(opt.input_files)
     fullFileName = opt.input_files{k};
     fprintf(1, 'Now reading %s\n', fullFileName);
@@ -49,7 +49,7 @@ for k = 1:numel(opt.input_files)
         end
     end
 
-    reader = build_reader(fullFileName, ext);
+    reader = build_reader_fn(fullFileName, ext);
     ds_frames = int32(1:opt.temporal_ds:reader.nFrames);
     Fds = numel(ds_frames);
 
@@ -67,7 +67,7 @@ for k = 1:numel(opt.input_files)
     m = matfile(outFile, 'Writable', true);
     m.Y = zeros(d1, d2, Fds, target_class);
     clear m
-
+%%
     for startIdx = 1:batch_size:Fds
         endIdx = min(Fds, startIdx + batch_size - 1);
 
@@ -89,6 +89,7 @@ for k = 1:numel(opt.input_files)
 
         clear raw chunk
     end
+ %%
     F(k) = Fds;
 end
 
@@ -101,7 +102,7 @@ end
 opt.output_files = opt.output_files(:)';
 CaliAli_options.downsampling = opt;
 
-end
+
 
 
 function reader = build_reader(fullFileName, ext, opts)
