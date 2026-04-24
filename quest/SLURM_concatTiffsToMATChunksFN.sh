@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -A p30771
-#SBATCH -p short
+#SBATCH -p normal
 #SBATCH -t 01:00:00
 #SBATCH -o ./logfiles/concatMatFile.%x-%j.out # STDOUT
 #SBATCH --job-name="concatTiffsToMatFile"
