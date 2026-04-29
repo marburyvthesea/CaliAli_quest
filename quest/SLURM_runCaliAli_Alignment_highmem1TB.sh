@@ -9,16 +9,20 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=1000G
 
+set -euo pipefail
+
 module purge all
 
 cd ~
 
-#path to file 
+# Inputs
+INPUT_combinedDir="${1:?ERROR: need <combinedDir> as arg1}"
+BVsize="${2:-}"   # optional string, e.g. "[1.60, 1.75]" or "1.60,1.75"
+gSig="${3:-}"     # optional positive scalar
 
-INPUT_combinedDir=$1
-
-
-echo $INPUT_combinedDir
+echo "combinedDir: $INPUT_combinedDir"
+echo "BVsize     : ${BVsize:-<default>}"
+echo "gSig       : ${gSig:-<default>}"
 
 #add project directory to PATH
 export PATH=$PATH/projects/p30771/
@@ -37,6 +41,9 @@ n=str2double(getenv('SLURM_CPUS_PER_TASK')); \
 if isnan(n) || n<1, n=str2double(getenv('SLURM_NPROCS')); end; \
 if isnan(n) || n<1, n=feature('numcores'); end; \
 maxNumCompThreads(n); \
-combinedDir='$INPUT_combinedDir';run('runCaliAli_Alignment_onMotionCorrectedFilesOrDet.m');exit;"
+combinedDir='${INPUT_combinedDir}'; \
+BVsize_str='${BVsize}'; \
+gSig_str='${gSig}'; \
+run('runCaliAli_Alignment_onMotionCorrectedFilesOrDet.m');exit;"
 
 echo 'finished analysis'
