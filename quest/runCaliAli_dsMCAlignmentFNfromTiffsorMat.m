@@ -3,6 +3,7 @@ function runCaliAli_dsMCAlignmentFNfromTiffsorMat(multiTiffInput, dsInput, BVsiz
 %
 % multiTiffInput can be:
 %   (A) cell array of directories containing denoised*_converted.tif*
+%       or grayscale TIFF frames/stacks such as 0.tif, 1.tif, 2.tif, ...
 %   (B) a directory containing *_denoised_converted_concat.mat files
 %   (C) cell array of *_denoised_converted_concat.mat file paths
 %
@@ -101,10 +102,13 @@ if ischar(multiTiffInput) || (isstring(multiTiffInput) && isscalar(multiTiffInpu
     p = char(multiTiffInput);
     if isfolder(p)
         d = dir(fullfile(p, '*_denoised_converted_concat.mat'));
-        assert(~isempty(d), 'No *_denoised_converted_concat.mat found in: %s', p);
-        names = sort({d.name});
-        input_files = fullfile(p, names);
-        input_files = reshape(input_files, 1, []);
+        if ~isempty(d)
+            names = sort({d.name});
+            input_files = fullfile(p, names);
+            input_files = reshape(input_files, 1, []);
+        else
+            input_files = {resolve_single_tiff_dir(p)};
+        end
         return;
     elseif isfile(p)
         input_files = {p};
@@ -162,21 +166,87 @@ input_files = cell(1, numel(multiTiffInput));
 for i = 1:numel(multiTiffInput)
     inDir = char(multiTiffInput{i});
     assert(isfolder(inDir), 'Expected folder, got: %s', inDir);
-
-    outMat = strcat(inDir, '_denoised_converted_concat.mat');
-
-    if isfile(outMat)
-        fprintf("Found existing concat mat (skipping TIFF concat): %s\n", outMat);
-    else
-        fprintf("Concatenating TIFFs in %s -> %s\n", inDir, outMat);
-        concat_tiffs_to_mat_chunksFN(inDir, outMat, ...
-            'Pattern', 'denoised*_converted.tif*', ...
-            'VarName', 'Y');
-    end
-
-    input_files{i} = outMat;
+    input_files{i} = resolve_single_tiff_dir(inDir);
 end
 input_files = reshape(input_files, 1, []);
+end
+
+function outMat = resolve_single_tiff_dir(inDir)
+outMat = strcat(inDir, '_denoised_converted_concat.mat');
+if isfile(outMat)
+    fprintf("Found existing concat mat (skipping TIFF concat): %s\n", outMat);
+    return;
+end
+
+[tiffPattern, tiffNames] = resolve_tiff_pattern_and_validate(inDir);
+fprintf("Concatenating %d grayscale TIFF(s) in %s with pattern %s -> %s\n", ...
+    numel(tiffNames), inDir, tiffPattern, outMat);
+concat_tiffs_to_mat_chunksFN(inDir, outMat, ...
+    'Pattern', tiffPattern, ...
+    'VarName', 'Y');
+end
+
+function [pattern, names] = resolve_tiff_pattern_and_validate(inDir)
+preferredPattern = 'denoised*_converted.tif*';
+fallbackPattern = '*.tif*';
+
+[~, preferredNames] = list_tiffs_if_present(inDir, preferredPattern);
+if ~isempty(preferredNames)
+    pattern = preferredPattern;
+    names = preferredNames;
+else
+    [~, names] = list_tiffs_naturalFN(inDir, fallbackPattern);
+    pattern = fallbackPattern;
+end
+
+assert(~isempty(names), 'No TIFF files found in: %s', inDir);
+validate_grayscale_tiffs(inDir, names);
+end
+
+function [paths, names] = list_tiffs_if_present(inDir, pattern)
+paths = {};
+names = {};
+d = dir(fullfile(inDir, pattern));
+if isempty(d)
+    return;
+end
+names = {d.name};
+if exist('natsortfiles','file') == 2
+    names = natsortfiles(names);
+else
+    names = simple_nat_sort_by_last_number_local(names);
+end
+paths = fullfile(inDir, names);
+end
+
+function validate_grayscale_tiffs(inDir, names)
+for k = 1:numel(names)
+    info = imfinfo(fullfile(inDir, names{k}));
+    if isempty(info)
+        error('Unable to read TIFF metadata for %s.', fullfile(inDir, names{k}));
+    end
+    sampleInfo = info(1);
+
+    if isfield(sampleInfo, 'ColorType') && ~strcmpi(sampleInfo.ColorType, 'grayscale')
+        error('TIFF %s is %s, not grayscale.', fullfile(inDir, names{k}), sampleInfo.ColorType);
+    end
+    if isfield(sampleInfo, 'SamplesPerPixel') && sampleInfo.SamplesPerPixel ~= 1
+        error('TIFF %s has %d samples per pixel; expected 1 for grayscale input.', ...
+            fullfile(inDir, names{k}), sampleInfo.SamplesPerPixel);
+    end
+end
+end
+
+function namesOut = simple_nat_sort_by_last_number_local(namesIn)
+nums = nan(size(namesIn));
+for i = 1:numel(namesIn)
+    tok = regexp(namesIn{i}, '(\d+)(?!.*\d)', 'tokens', 'once');
+    if ~isempty(tok)
+        nums(i) = str2double(tok{1});
+    end
+end
+[~, idx] = sortrows([isnan(nums(:)) nums(:)]);
+namesOut = namesIn(idx);
 end
 
 function v = parseBVsize2(s)

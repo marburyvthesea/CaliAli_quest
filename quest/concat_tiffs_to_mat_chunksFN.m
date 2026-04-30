@@ -10,7 +10,7 @@ function outMatPath = concat_tiffs_to_mat_chunksFN(inDir, outMatPath, varargin)
 %   'SaveOpts'  (default true)  -> saves a small struct with source file list
 %
 % Example:
-%   concat_tiffs_to_mat_chunks('/path/day_001', '/path/day_001/combined.mat');
+%   concat_tiffs_to_mat_chunksFN('/path/day_001', '/path/day_001/combined.mat');
 
 p = inputParser;
 p.addParameter('Pattern', '*_converted.tif*', @(s)ischar(s)||isstring(s));

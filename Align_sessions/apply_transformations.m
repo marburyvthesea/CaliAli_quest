@@ -20,7 +20,8 @@ R = CaliAli_options.inter_session_alignment.range;
 R = single(R ./ max(R));
 
 flag_field = 'alignment_completed';
-out_file = CaliAli_options.inter_session_alignment.out_aligned_sessions;
+out_file = CaliAli_save(CaliAli_options.inter_session_alignment.out_aligned_sessions);
+CaliAli_options.inter_session_alignment.out_aligned_sessions = out_file;
 input_F = CaliAli_options.inter_session_alignment.input_F;
 if isempty(input_F) && isfield(CaliAli_options.inter_session_alignment, 'F')
     input_F = CaliAli_options.inter_session_alignment.F;
