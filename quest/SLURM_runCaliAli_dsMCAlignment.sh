@@ -1,13 +1,13 @@
 #!/bin/bash
 #SBATCH -A p30771
 #SBATCH -p normal
-#SBATCH -t 48:00:00
+#SBATCH -t 12:00:00
 #SBATCH -o ./logfiles/CaliAli_dsMCAlignment.%x-%j.out
 #SBATCH --job-name="CaliAli_mcAlignment_cpuspertask"
 #SBATCH -N 1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=400G
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=150G
 
 set -euo pipefail
 
@@ -57,3 +57,13 @@ BVsize_str = '${BVsize_str}'; \
 gSig_str = '${gSig_str}'; \
 runCaliAli_dsMCAlignmentFNfromTiffsorMat(multiTiffInput, dsVal, BVsize_str, gSig_str); \
 exit;"
+
+LOG1="./logfiles/CaliAli_dsMCAlignment.${SLURM_JOB_NAME}-${SLURM_JOB_ID}.out"
+LOG2="/projects/p30771/logfiles/CaliAli_dsMCAlignment.${SLURM_JOB_NAME}-${SLURM_JOB_ID}.out"
+cp "$LOG1" "$LOG2"
+
+
+
+
+
+
